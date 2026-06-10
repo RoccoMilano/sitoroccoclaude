@@ -6,6 +6,69 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ──────────────────────────────────────────────
+     CUSTOM CURSOR
+  ────────────────────────────────────────────── */
+  const dot  = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+
+  let mouseX = 0, mouseY = 0;
+  let ringX  = 0, ringY  = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top  = mouseY + 'px';
+  });
+
+  // ring follows with lerp for fluid lag
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // ring expands on interactive elements
+  document.querySelectorAll('a, button, .cert-block, .tl-item-cin').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
+
+  // hide cursor when leaving window
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+  });
+
+
+  /* ──────────────────────────────────────────────
+     PARALLAX — hero background RM text
+  ────────────────────────────────────────────── */
+  const parallaxEl = document.getElementById('p1Parallax');
+  const hero       = document.getElementById('p1');
+
+  if (parallaxEl && hero) {
+    window.addEventListener('scroll', () => {
+      const scrollY      = window.scrollY;
+      const heroHeight   = hero.offsetHeight;
+      if (scrollY > heroHeight) return; // only while hero is visible
+      const progress     = scrollY / heroHeight;       // 0 → 1
+      const translateY   = progress * 80;              // moves 80px down
+      const translateX   = progress * -30;             // drifts slightly left
+      const scale        = 1 + progress * 0.08;        // grows slightly
+      parallaxEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }, { passive: true });
+  }
+
+
+  /* ──────────────────────────────────────────────
      HERO — staggered entrance on load
   ────────────────────────────────────────────── */
   setTimeout(() => {
@@ -38,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
      STATEMENT — word-by-word reveal
   ────────────────────────────────────────────── */
   const hlIds = ['hl1','hl2','hl3','hl4','hl5','hl6','hl7'];
-  const p2 = document.getElementById('p2');
+  const p2    = document.getElementById('p2');
 
   if (p2) {
     const p2Obs = new IntersectionObserver((entries) => {
@@ -73,14 +136,14 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             block.classList.add('in');
 
-            const counter = block.querySelector('.nb-count');
+            const counter   = block.querySelector('.nb-count');
             if (!counter) return;
 
-            const target = parseInt(counter.dataset.target, 10);
-            const duration = 1000;
-            const steps = 40;
+            const target    = parseInt(counter.dataset.target, 10);
+            const duration  = 1000;
+            const steps     = 40;
             const increment = target / steps;
-            let current = 0;
+            let current     = 0;
 
             const timer = setInterval(() => {
               current = Math.min(current + increment, target);
@@ -136,8 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
         words.forEach((el, i) => {
           setTimeout(() => {
             el.style.transition = 'opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1), color 0.25s ease';
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
+            el.style.opacity    = '1';
+            el.style.transform  = 'translateY(0)';
           }, i * 80);
         });
 
@@ -150,62 +213,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ──────────────────────────────────────────────
-     FOOTER ROWS — stagger in
-  ────────────────────────────────────────────── */
-  const pFooter = document.getElementById('pFooter');
-
-  if (pFooter) {
-    const footerObs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-
-        e.target.querySelectorAll('.fc').forEach((el, i) => {
-          setTimeout(() => {
-            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-          }, i * 80);
-        });
-
-        footerObs.unobserve(e.target);
-      });
-    }, { threshold: 0.3 });
-
-    footerObs.observe(pFooter);
-
-    pFooter.querySelectorAll('.fc').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(8px)';
-    });
-  }
-
-
-  /* ──────────────────────────────────────────────
      CHAPTER INTRO — cinematic reveal
      1. linea dorata si estende da sx a dx
-     2. numero appare da sotto
+     2. numero sale dal basso
      3. label + titolo appaiono in sequenza
   ────────────────────────────────────────────── */
-
-  // Prepara i chapter intro: inietta la linea e nasconde gli elementi
   document.querySelectorAll('.chapter-intro').forEach(ch => {
-
-    // Inserisci la linea animata prima del numero
     const line = document.createElement('div');
     line.className = 'ch-reveal-line';
     ch.insertBefore(line, ch.firstChild);
 
-    // Nascondi numero e testo finché non si attivano
     const num   = ch.querySelector('.ch-num');
     const label = ch.querySelector('.ch-label');
     const title = ch.querySelector('.ch-title');
 
-    if (num)   { num.style.opacity = '0'; num.style.transform = 'translateY(20px)'; }
+    if (num)   { num.style.opacity   = '0'; num.style.transform   = 'translateY(20px)'; }
     if (label) { label.style.opacity = '0'; label.style.transform = 'translateY(10px)'; }
     if (title) { title.style.opacity = '0'; title.style.transform = 'translateY(10px)'; }
   });
 
-  // Observer per triggherare l'animazione
   const chObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (!e.isIntersecting) return;
@@ -216,13 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const label = ch.querySelector('.ch-label');
       const title = ch.querySelector('.ch-title');
 
-      // Step 1 — linea si estende (0ms)
       if (line) {
         line.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
         line.style.transform  = 'scaleX(1)';
       }
-
-      // Step 2 — numero sale (300ms)
       setTimeout(() => {
         if (num) {
           num.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
@@ -230,8 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
           num.style.transform  = 'translateY(0)';
         }
       }, 300);
-
-      // Step 3 — label appare (520ms)
       setTimeout(() => {
         if (label) {
           label.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -239,8 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
           label.style.transform  = 'translateY(0)';
         }
       }, 520);
-
-      // Step 4 — titolo appare (660ms)
       setTimeout(() => {
         if (title) {
           title.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -254,5 +273,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.4 });
 
   document.querySelectorAll('.chapter-intro').forEach(ch => chObs.observe(ch));
+
+
+  /* ──────────────────────────────────────────────
+     FOOTER ROWS — stagger in
+  ────────────────────────────────────────────── */
+  const pFooter = document.getElementById('pFooter');
+
+  if (pFooter) {
+    pFooter.querySelectorAll('.fc').forEach(el => {
+      el.style.opacity   = '0';
+      el.style.transform = 'translateY(8px)';
+    });
+
+    const footerObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+
+        e.target.querySelectorAll('.fc').forEach((el, i) => {
+          setTimeout(() => {
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            el.style.opacity    = '1';
+            el.style.transform  = 'translateY(0)';
+          }, i * 80);
+        });
+
+        footerObs.unobserve(e.target);
+      });
+    }, { threshold: 0.3 });
+
+    footerObs.observe(pFooter);
+  }
 
 });

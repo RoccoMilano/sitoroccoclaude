@@ -609,3 +609,129 @@ body {
   position: relative;
   z-index: 1;
 }
+
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+
+* { cursor: none !important; }
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, opacity 0.2s ease;
+}
+
+.cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease,
+              border-color 0.3s ease, transform 0.08s ease;
+}
+
+/* cursor expands on hoverable elements */
+a:hover ~ .cursor-ring,
+button:hover ~ .cursor-ring,
+.cursor-ring.hover {
+  width: 48px;
+  height: 48px;
+  border-color: var(--gold);
+}
+
+/* hide on mobile */
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
+  * { cursor: auto !important; }
+}
+
+
+/* ============================================================
+   HERO PARALLAX — background RM text
+   ============================================================ */
+
+.p1-bg-parallax {
+  position: absolute;
+  top: -10%;
+  left: -2%;
+  font-size: 55vw;
+  font-weight: 500;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border);
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+  z-index: 0;
+}
+
+/* keep all hero content above parallax bg */
+.p1 > *:not(.p1-bg-parallax) {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ============================================================
+   CERTIFICATIONS — categories
+   ============================================================ */
+
+.certs-category-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  padding: 2rem 3rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.certs-category-label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.p-certs {
+  padding: 1rem 0 3rem;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  margin: 0 3rem 1px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cert-block {
+  background: var(--bg);
+  padding: 1.75rem 2rem;
+  transition: background 0.2s;
+}
+.cert-block:hover { background: var(--bg2); }
+
+@media (max-width: 768px) {
+  .certs-category-label { padding: 1.5rem 1.5rem 0.75rem; }
+  .certs-grid { margin: 0 1.5rem 1px; grid-template-columns: 1fr; }
+}
