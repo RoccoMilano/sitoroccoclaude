@@ -173,11 +173,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
     footerObs.observe(pFooter);
 
-    // init footer contact rows as hidden
     pFooter.querySelectorAll('.fc').forEach(el => {
       el.style.opacity = '0';
       el.style.transform = 'translateY(8px)';
     });
   }
+
+
+  /* ──────────────────────────────────────────────
+     CHAPTER INTRO — cinematic reveal
+     1. linea dorata si estende da sx a dx
+     2. numero appare da sotto
+     3. label + titolo appaiono in sequenza
+  ────────────────────────────────────────────── */
+
+  // Prepara i chapter intro: inietta la linea e nasconde gli elementi
+  document.querySelectorAll('.chapter-intro').forEach(ch => {
+
+    // Inserisci la linea animata prima del numero
+    const line = document.createElement('div');
+    line.className = 'ch-reveal-line';
+    ch.insertBefore(line, ch.firstChild);
+
+    // Nascondi numero e testo finché non si attivano
+    const num   = ch.querySelector('.ch-num');
+    const label = ch.querySelector('.ch-label');
+    const title = ch.querySelector('.ch-title');
+
+    if (num)   { num.style.opacity = '0'; num.style.transform = 'translateY(20px)'; }
+    if (label) { label.style.opacity = '0'; label.style.transform = 'translateY(10px)'; }
+    if (title) { title.style.opacity = '0'; title.style.transform = 'translateY(10px)'; }
+  });
+
+  // Observer per triggherare l'animazione
+  const chObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+
+      const ch    = e.target;
+      const line  = ch.querySelector('.ch-reveal-line');
+      const num   = ch.querySelector('.ch-num');
+      const label = ch.querySelector('.ch-label');
+      const title = ch.querySelector('.ch-title');
+
+      // Step 1 — linea si estende (0ms)
+      if (line) {
+        line.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        line.style.transform  = 'scaleX(1)';
+      }
+
+      // Step 2 — numero sale (300ms)
+      setTimeout(() => {
+        if (num) {
+          num.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+          num.style.opacity    = '1';
+          num.style.transform  = 'translateY(0)';
+        }
+      }, 300);
+
+      // Step 3 — label appare (520ms)
+      setTimeout(() => {
+        if (label) {
+          label.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          label.style.opacity    = '1';
+          label.style.transform  = 'translateY(0)';
+        }
+      }, 520);
+
+      // Step 4 — titolo appare (660ms)
+      setTimeout(() => {
+        if (title) {
+          title.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          title.style.opacity    = '1';
+          title.style.transform  = 'translateY(0)';
+        }
+      }, 660);
+
+      chObs.unobserve(ch);
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('.chapter-intro').forEach(ch => chObs.observe(ch));
 
 });

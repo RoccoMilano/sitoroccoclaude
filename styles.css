@@ -578,3 +578,34 @@ body {
   .p-certs  { padding: 2rem 1.5rem; }
   .p-footer { padding: 4rem 1.5rem; }
 }
+
+
+/* ============================================================
+   CHAPTER INTRO — cinematic reveal line
+   ============================================================ */
+
+.chapter-intro {
+  overflow: hidden; /* contiene la linea durante l'animazione */
+}
+
+/* linea dorata che si estende da sinistra */
+.ch-reveal-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-left: 2px solid var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* assicura che numero e testo stiano sopra la linea */
+.chapter-intro .ch-num,
+.chapter-intro .ch-label,
+.chapter-intro .ch-title {
+  position: relative;
+  z-index: 1;
+}
