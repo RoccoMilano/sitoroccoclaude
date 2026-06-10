@@ -16,8 +16,8 @@
   --gold-dim:#C9A84C44;
   --text:    #F0EAE0;
   --muted:   #7A7268;
-  --faint:   #2A2820;
-  --border:  #222018;
+  --faint:   #38342A;
+  --border:  #2E2B22;
   --font:    'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -672,7 +672,7 @@ button:hover ~ .cursor-ring,
   font-weight: 500;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1px var(--border);
+  -webkit-text-stroke: 1.5px #4A4538;
   letter-spacing: -0.04em;
   pointer-events: none;
   user-select: none;
