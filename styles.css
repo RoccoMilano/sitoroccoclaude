@@ -672,7 +672,7 @@ button:hover ~ .cursor-ring,
   font-weight: 500;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1px var(--border);
+  -webkit-text-stroke: 1.5px #4A4538;
   letter-spacing: -0.04em;
   pointer-events: none;
   user-select: none;
